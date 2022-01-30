@@ -11,6 +11,7 @@ import javafx.scene.control.TextArea;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,11 +45,12 @@ public class Controller {
         //add an anonymous class for an event listener so the first item from the list will be selected at the start
         todoListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TodoItem>() {
             @Override
-            public void changed(ObservableValue<? extends TodoItem> observable, TodoItem todoItem, TodoItem newValue) {
+            public void changed(ObservableValue<? extends TodoItem> observable, TodoItem oldValue, TodoItem newValue) {
                 if(newValue != null){
                     TodoItem item = todoListView.getSelectionModel().getSelectedItem();
                     itemDetailsTextArea.setText(item.getDetails());
-//                    deadlineLabel.setText(item.getDeadline().toString());
+                    DateTimeFormatter df = DateTimeFormatter.ofPattern("MMMM d, yyyy");
+                    deadlineLabel.setText(df.format(item.getDeadline()));
                 }
             }
         });
