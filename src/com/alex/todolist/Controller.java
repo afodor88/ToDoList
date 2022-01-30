@@ -1,5 +1,6 @@
 package com.alex.todolist;
 
+import com.alex.todolist.datamodel.TodoData;
 import com.alex.todolist.datamodel.TodoItem;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -41,6 +42,9 @@ public class Controller {
         todoItems.add(item3);
         todoItems.add(item4);
         todoItems.add(item5);
+
+        //saving the data in the singletone
+        TodoData.getInstance().setTodoItems(todoItems);
 
         //add an anonymous class for an event listener so the first item from the list will be selected at the start
         todoListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TodoItem>() {
