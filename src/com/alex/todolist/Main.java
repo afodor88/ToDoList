@@ -12,6 +12,16 @@ import java.io.IOException;
 public class Main extends Application {
 
     @Override
+    public void init() throws Exception {
+        try{
+            //load the data from the file before the application opens
+            TodoData.getInstance().loadTodoItems();
+        }catch (IOException e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+    @Override
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("mainwindow.fxml"));
         primaryStage.setTitle("Todo List");
