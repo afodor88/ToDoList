@@ -62,7 +62,11 @@ public class Controller {
         Dialog<ButtonType> dialog = new Dialog<>();
         //changing the owner to the dialog window
         dialog.initOwner(mainBorderPane.getScene().getWindow());
+        //set the title of the dialog
+        dialog.setTitle("Add New Todo Item");
+        dialog.setHeaderText("Use this dialog to create a new todo item");
         FXMLLoader fxmlLoader = new FXMLLoader();
+        //load the fxml file for the dialog
         fxmlLoader.setLocation(getClass().getResource("todoItemDialog.fxml"));
 
         try {
@@ -74,10 +78,15 @@ public class Controller {
         }
         dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
         dialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
+
+        //show dialog and wait for OK/Cancel to be pressed
         Optional<ButtonType> result = dialog.showAndWait();
         if(result.isPresent() && result.get() == ButtonType.OK){
             DialogController controller = fxmlLoader.getController();
-            controller.processResults();
+            TodoItem newItem = controller.processResults();
+            todoListView.getItems().setAll(TodoData.getInstance().getTodoItems());
+            todoListView.getSelectionModel().select(newItem);
+
             System.out.println("Ok pressed");
         } else {
             System.out.println("Cancel pressed");
