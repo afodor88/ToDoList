@@ -62,9 +62,11 @@ public class Controller {
         Dialog<ButtonType> dialog = new Dialog<>();
         //changing the owner to the dialog window
         dialog.initOwner(mainBorderPane.getScene().getWindow());
+        FXMLLoader fxmlLoader = new FXMLLoader();
+        fxmlLoader.setLocation(getClass().getResource("todoItemDialog.fxml"));
+
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("todoItemDialog.fxml"));
-            dialog.getDialogPane().setContent(root);
+            dialog.getDialogPane().setContent(fxmlLoader.load());
         } catch (IOException e) {
             System.out.println("Couldn't load the dialog");
             e.printStackTrace();
@@ -74,6 +76,8 @@ public class Controller {
         dialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
         Optional<ButtonType> result = dialog.showAndWait();
         if(result.isPresent() && result.get() == ButtonType.OK){
+            DialogController controller = fxmlLoader.getController();
+            controller.processResults();
             System.out.println("Ok pressed");
         } else {
             System.out.println("Cancel pressed");
