@@ -70,7 +70,16 @@ public class Controller {
                         } else {
                             setText(item.getShortDescription());
                             if (item.getDeadline().equals(LocalDate.now())) {
-                                setTextFill(Color.RED);
+                                setStyle("-fx-text-fill: crimson");
+                            } else if (item.getDeadline().equals(LocalDate.now().plusDays(1)))
+                            {
+                                setStyle("-fx-text-fill: orange");
+                            } else if (item.getDeadline().equals(LocalDate.now().plusDays(2)))
+                            {
+                                setStyle("-fx-text-fill: green");
+                            } else
+                            {
+                                setStyle("-fx-text-fill: black");
                             }
                         }
                     }
