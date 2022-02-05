@@ -9,6 +9,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.paint.Color;
+import javafx.util.Callback;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -54,6 +56,28 @@ public class Controller {
         todoListView.setItems(TodoData.getInstance().getTodoItems());
         todoListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         todoListView.getSelectionModel().selectFirst();
+        //setting the color red for the items in the list that are due
+        todoListView.setCellFactory(new Callback<ListView<TodoItem>, ListCell<TodoItem>>() {
+            @Override
+            public ListCell<TodoItem> call(ListView<TodoItem> param) {
+                ListCell<TodoItem> cell = new ListCell<TodoItem>() {
+
+                    @Override
+                    protected void updateItem(TodoItem item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty) {
+                            setText(null);
+                        } else {
+                            setText(item.getShortDescription());
+                            if (item.getDeadline().equals(LocalDate.now())) {
+                                setTextFill(Color.RED);
+                            }
+                        }
+                    }
+                };
+                return cell;
+            }
+        });
     }
 
     //Dialog opens when the user presses File -> New
@@ -81,7 +105,7 @@ public class Controller {
 
         //show dialog and wait for OK/Cancel to be pressed
         Optional<ButtonType> result = dialog.showAndWait();
-        if(result.isPresent() && result.get() == ButtonType.OK) {
+        if (result.isPresent() && result.get() == ButtonType.OK) {
             DialogController controller = fxmlLoader.getController();
             TodoItem newItem = controller.processResults();
             todoListView.getSelectionModel().select(newItem);
