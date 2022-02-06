@@ -4,6 +4,7 @@ import com.alex.todolist.datamodel.TodoData;
 import com.alex.todolist.datamodel.TodoItem;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -21,6 +22,7 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -71,7 +73,18 @@ public class Controller {
         });
 
 
-        todoListView.setItems(TodoData.getInstance().getTodoItems());
+        //sorting the todo items from the list by due date
+        SortedList<TodoItem> sortedList = new SortedList<TodoItem>(TodoData.getInstance().getTodoItems(), new Comparator<TodoItem>() {
+            @Override
+            public int compare(TodoItem o1, TodoItem o2) {
+                return o1.getDeadline().compareTo(o2.getDeadline());
+            }
+        });
+
+//        todoListView.setItems(TodoData.getInstance().getTodoItems());
+
+        //update the UI with the sorted list, sorted by due date
+        todoListView.setItems(sortedList);
         todoListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         todoListView.getSelectionModel().selectFirst();
         //setting the color red for the items in the list that are due
