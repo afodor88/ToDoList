@@ -86,6 +86,7 @@ public class Controller {
 
         wantAllItems = new Predicate<TodoItem>() {
             @Override
+            //the test method will return all the todo items since it's returning true for every item when testing
             public boolean test(TodoItem todoItem) {
                 return true;
             }
@@ -93,6 +94,7 @@ public class Controller {
 
         wantTodaysItems = new Predicate<TodoItem>() {
             @Override
+            //the test method is testing every todoItem from the list and it will return all the items that passed the condition todoItem.getDeadline().equals(LocalDate.now())
             public boolean test(TodoItem todoItem) {
                 return (todoItem.getDeadline().equals(LocalDate.now()));
             }
