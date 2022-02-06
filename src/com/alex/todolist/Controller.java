@@ -2,6 +2,7 @@ package com.alex.todolist;
 
 import com.alex.todolist.datamodel.TodoData;
 import com.alex.todolist.datamodel.TodoItem;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.transformation.FilteredList;
@@ -234,5 +235,11 @@ public class Controller {
             filteredList.setPredicate(wantAllItems);
             todoListView.getSelectionModel().select(selectedItem);
         }
+    }
+
+    //exit the application when Exit button is pressed
+    @FXML
+    public void handleExit(){
+        Platform.exit();
     }
 }

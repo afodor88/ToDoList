@@ -28,7 +28,7 @@
                     <items>
                         <MenuItem onAction="#showNewItemDialog" text="New..."/>
                         <SeparatorMenuItem/>
-                        <MenuItem text="Exit"/>
+                        <MenuItem text="Exit" onAction="#handleExit"/>
                     </items>
                 </Menu>
             </MenuBar>
