@@ -60,8 +60,14 @@ public class Controller {
     public void initialize() {
 
 
+        //creating a context menu
         listContextMenu = new ContextMenu();
+        //creating a delete button
         MenuItem deleteMenuItem = new MenuItem("Delete");
+        //creating a edit button
+        MenuItem editMenuItem = new MenuItem("Edit");
+
+        //waiting for delete to be pressed
         deleteMenuItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -70,8 +76,20 @@ public class Controller {
             }
         });
 
+        //waiting for edit to be pressed
+        editMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                TodoItem item = todoListView.getSelectionModel().getSelectedItem();
+                editItem(item);
+
+            }
+        });
+
+        //display context menu options in the UI
         listContextMenu.getItems().addAll(deleteMenuItem);
-        //add an anonymous class for an event listener so the first item from the list will be selected at the start
+        listContextMenu.getItems().addAll(editMenuItem);
+        //add an anonymous class for an event listener; this will update the details and the deadline when an item is selected in UI
         todoListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TodoItem>() {
             @Override
             public void changed(ObservableValue<? extends TodoItem> observable, TodoItem oldValue, TodoItem newValue) {
@@ -115,7 +133,9 @@ public class Controller {
         //update the UI with the sorted list, sorted by due date
         todoListView.setItems(sortedList);
         todoListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        //select first item from the list
         todoListView.getSelectionModel().selectFirst();
+
         //setting the color red for the items in the list that are due
         todoListView.setCellFactory(new Callback<ListView<TodoItem>, ListCell<TodoItem>>() {
             @Override
@@ -188,6 +208,50 @@ public class Controller {
     }
 
     @FXML
+    public void editItem(TodoItem item) {
+        Dialog<ButtonType> editDialog = new Dialog<>();
+        editDialog.initOwner(mainBorderPane.getScene().getWindow());
+        editDialog.setTitle("Edit Todo Item: " + item.getShortDescription());
+        editDialog.setHeaderText("Use this dialog to edit " + item.getShortDescription());
+        FXMLLoader fxmlLoader = new FXMLLoader();
+        //load the fxml file for the dialog
+        fxmlLoader.setLocation(getClass().getResource("todoItemDialog.fxml"));
+
+        try {
+            editDialog.getDialogPane().setContent(fxmlLoader.load());
+        } catch (IOException e) {
+            System.out.println("Couldn't load the dialog");
+            e.printStackTrace();
+            return;
+        }
+        editDialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
+        editDialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
+
+        //show dialog and wait for OK/Cancel to be pressed
+        Optional<ButtonType> result = editDialog.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            DialogController controller = fxmlLoader.getController();
+            TodoItem editedItem = controller.editItem(item);
+            //clearing the selection so the UI refreshes
+            todoListView.getSelectionModel().clearSelection();
+            todoListView.getSelectionModel().select(editedItem);
+        }
+
+    }
+
+    @FXML
+    public void deleteItem(TodoItem item) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Delete Todo Item");
+        alert.setHeaderText("Delete item: " + item.getShortDescription());
+        alert.setContentText("Are you sure? Press OK to confirm, or cancel to Back out.");
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && (result.get() == ButtonType.OK)) {
+            TodoData.getInstance().deleteTodoItem(item);
+        }
+    }
+
+    @FXML
     public void handleKeyPressed(KeyEvent keyEvent) {
         TodoItem selectedItem = todoListView.getSelectionModel().getSelectedItem();
         if (selectedItem != null) {
@@ -205,17 +269,9 @@ public class Controller {
         deadlineLabel.setText(item.getDeadline().toString());
     }
 
-    @FXML
-    public void deleteItem(TodoItem item) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Delete Todo Item");
-        alert.setHeaderText("Delete item: " + item.getShortDescription());
-        alert.setContentText("Are you sure? Press OK to confirm, or cancel to Back out.");
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.isPresent() && (result.get() == ButtonType.OK)) {
-            TodoData.getInstance().deleteTodoItem(item);
-        }
-    }
+
+
+
 
     //filter or unfilter the items by due date when the filter button is pressed
     @FXML
@@ -224,11 +280,11 @@ public class Controller {
         if (filterToggleButton.isSelected()) {
             filteredList.setPredicate(wantTodaysItems);
             //check if there are no todo items in the list after pressing the filter button.
-            if(filteredList.isEmpty()){
+            if (filteredList.isEmpty()) {
                 //if yes, we will clear the details and the deadline
                 itemDetailsTextArea.clear();
                 deadlineLabel.setText("");
-            } else if(filteredList.contains(selectedItem)){
+            } else if (filteredList.contains(selectedItem)) {
                 todoListView.getSelectionModel().select(selectedItem);
             } else {
                 todoListView.getSelectionModel().selectFirst();
@@ -241,7 +297,7 @@ public class Controller {
 
     //exit the application when Exit button is pressed
     @FXML
-    public void handleExit(){
+    public void handleExit() {
         Platform.exit();
     }
 }

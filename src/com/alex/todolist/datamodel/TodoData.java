@@ -86,5 +86,9 @@ public class TodoData {
         todoItems.remove(item);
     }
 
+    public void editTodoItem(TodoItem oldItem, TodoItem newItem){
+        todoItems.set(todoItems.indexOf(oldItem), newItem);
+    }
+
 
 }
